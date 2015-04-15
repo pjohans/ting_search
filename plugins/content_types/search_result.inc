@@ -83,17 +83,35 @@ function ting_search_search_result_content_type_render($subtype, $conf, $panel_a
 
     // Set message.
     $message = '';
+
+    $frequency_rank = array(
+      'rank_main_title' => t('Title'),
+      'rank_creator' => t('Creator'),
+      'rank_subject' => t('Subject')
+    );
+    if (isset($search_result) && in_array($search_result->sortUsed, array_keys($frequency_rank))) {
+      $msg = t('Records are sorted by %sortUsed . Select another sort if it is not suited', array('%sortUsed' => $frequency_rank[$search_result->sortUsed]));
+      $message .= '<div class="messages status">' . $msg . '</div>';
+    }
+
     if (isset($search_result) && $limit < $search_result->numTotalObjects) {
       $msg = variable_get('ting_search_result_message', 'Your search gave more than %s results. Try to search more specific or use the facets to filter the result.');
       $msg = sprintf($msg, $limit);
-      $message = '<div class="messages search-field-in-content--message">' . $msg . '</div>';
+      $message .= '<div class="messages search-field-in-content--message">' . $msg . '</div>';
     }
 
     $block->title = t('Search results');
     $block->content = $message . theme('ting_search_results', array('results' => $results['#results'], 'module' => $conf['type']));;
   }
   else {
-    if (empty($conf['override_empty'])) {
+    $search_result = drupal_static('ting_search_results');
+    if(isset($search_result->error)){
+      $block->title = t('An error occured: %error_text ',array('%error_text' => $search_result->error));
+      $block->content = t('<ul><li>Please try again.</li> <li>Contact administrator if problem persists.</li>');
+      $support_url = l(t('Customer service'), 'http://kundeservice.dbc.dk/',array('attributes' => array('target'=>'_blank')));
+      $block->content .= t('<li>You can check service status here: '). $support_url .'</li></ul>';
+    }
+    elseif (empty($conf['override_empty'])) {
       $block->title = t('Your search yielded no results');
       $block->content = search_help('search#noresults', drupal_help_arg());
     }

@@ -21,7 +21,16 @@ function ting_search_result_count_content_type_render($subtype, $conf, $panel_ar
   $block = new stdClass();
 
   $search_result = drupal_static('ting_search_results');
-  if (isset($search_result)) {
+
+  if(isset($search_result->error)) {
+    $txt = t('An error occurred: %error_text ', array('%error_text' => $search_result->error));
+    $block->content = array(
+      '#prefix' => '<h1 class="page-title">',
+      '#suffix' => '</h1>',
+      '#markup' => $txt,
+    );
+  }
+  elseif (isset($search_result)) {
     $results = isset($search_result->numTotalObjects) ? (int) $search_result->numTotalObjects : 0;
     $string = format_plural($results > 1 ? $results : 1, 'Result', 'Results');
     $block->content = array(
@@ -33,7 +42,6 @@ function ting_search_result_count_content_type_render($subtype, $conf, $panel_ar
       )),
     );
   }
-
   return $block;
 }
 
