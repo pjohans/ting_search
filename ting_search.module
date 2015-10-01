@@ -976,7 +976,7 @@ function _ting_search_quote($string) {
   // Hold cql query for further changes.
   $cql_query = $cqlDoc->string_to_cql();
 
-  // Issue 1392 filter on agency if required.
+  // Filter on agency if required.
   $filter_me = variable_get('ting_search_filter_holdingsitem',0);
   if ($filter_me === 1 && variable_get('ting_agency', FALSE)) {
     $cql_query .= ' and holdingsitem.agencyId=' . variable_get('ting_agency');
