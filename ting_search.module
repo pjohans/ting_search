@@ -397,7 +397,7 @@ function ting_search_search_execute($keys = NULL, $conditions = NULL) {
     $options = array();
     $results = array();
     $facet_array = array();
-    $query = '(' . _ting_search_quote($keys) . ')';
+    $query = $keys;
     $options['numFacets'] = variable_get('ting_search_number_of_facets', 25);
 
     // Extend query with selected facets.
@@ -974,14 +974,14 @@ function ting_search_submit($form, &$form_state) {
 function _ting_search_quote($string) {
   $cqlDoc = new TingSearchCqlDoctor($string);
   // Hold cql query for further changes.
-  $return = $cqlDoc->string_to_cql();
+  $cql_query = $cqlDoc->string_to_cql();
 
   // Issue 1392 filter on agency if required.
   $filter_me = variable_get('ting_search_filter_holdingsitem',0);
-  if ($filter_me === 1) {
-    $return .= ' and holdingsitem.agencyId=' . variable_get('ting_agency');
+  if ($filter_me === 1 && variable_get('ting_agency', FALSE)) {
+    $cql_query .= ' and holdingsitem.agencyId=' . variable_get('ting_agency');
   }
 
   // Return cql query.
-  return $return;
+  return $cql_query;
 }
