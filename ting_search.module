@@ -974,14 +974,7 @@ function ting_search_submit($form, &$form_state) {
 function _ting_search_quote($string) {
   $cqlDoc = new TingSearchCqlDoctor($string);
   // Hold cql query for further changes.
-  $cql_query = $cqlDoc->string_to_cql();
-
-  // Filter on agency if required.
-  $filter_me = variable_get('ting_search_filter_holdingsitem',0);
-  if ($filter_me === 1 && variable_get('ting_agency', FALSE)) {
-    $cql_query .= ' and holdingsitem.agencyId=' . variable_get('ting_agency');
-  }
-
+  $cql_query = $cqlDoc->string_to_cql();  
   // Return cql query.
   return $cql_query;
 }
